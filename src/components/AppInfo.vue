@@ -1,7 +1,14 @@
 <template>
-  <el-container id="app_info">
-  <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="应用详情" name="appInfo">
+  <div id="app_info">
+  
+  <el-tabs 
+    v-model="activeName" 
+    @tab-click="handleClick"
+    width="100%">
+    <el-tab-pane 
+      label="应用详情" 
+      name="appInfo"
+      >
             {{appInfo.id}}->{{appInfo.name}}
     </el-tab-pane>
     <el-tab-pane label="开发者" name="developers">
@@ -27,19 +34,19 @@
         <el-table-column
           prop="mobile"
           label="开发者账号"
-          width="180">
+          width="600px">
         </el-table-column>
 
         <el-table-column
           prop="nickName"
           label="开发者名称"
-          width="180">
+          width="300px">
         </el-table-column>    
 
         <el-table-column
           prop="role"
           label="开发者角色"
-          width="180">
+          width="100px">
         </el-table-column> 
       </el-table>
 
@@ -75,7 +82,7 @@
     </div>
   </el-dialog>
 
-  </el-container>
+  </div>
 </template>
 
 <script>
@@ -129,10 +136,19 @@ export default {
     this.appId = sessionStorage.getItem("currentAppId");
     this.activeName = "appInfo";
     this.getAppInfo();
-    this.getDvelopers();
   },
   methods: {
-    handleClick(tab, event) {},
+    handleClick(tab, event) {
+      if (tab.name == "developers") {
+        if (this.developers.length == 0) {
+          this.getDvelopers();
+        }
+      } else {
+        if (this.appInfo == "") {
+          this.getAppInfo();
+        }
+      }
+    },
     getAppInfo() {
       this.$http.get(this.apiUrl + "/api/app/" + this.appId, this.options).then(
         resp => {

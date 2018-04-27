@@ -73,11 +73,16 @@ export default {
         }
       };
       this.getProfile();
-      this.getApps();
     }
   },
   methods: {
-    handleClick(tab, event) {},
+    handleClick(tab, event) {
+      if (tab.name == "apps" && this.apps.length == 0) {
+        this.getApps();
+      } else if (this.profile == "") {
+        this.getProfile();
+      }
+    },
     //获取用户详情
     getProfile() {
       this.$http.get(this.apiUrl + "/api/profile", this.options).then(
@@ -88,8 +93,8 @@ export default {
           }
         },
         resp => {
-          console.log(403);
-          this.do403();
+          console.log(resp);
+          // this.do403();
         }
       );
     },
@@ -97,13 +102,13 @@ export default {
       this.$http.get(this.apiUrl + "/api/apps", this.options).then(
         resp => {
           var ret = resp.body;
-
           if (ret.code == "200") {
             this.apps = ret.data;
           }
         },
         resp => {
-          this.do403();
+          // this.do403();
+          console.log(resp);
         }
       );
     },

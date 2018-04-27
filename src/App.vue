@@ -12,9 +12,8 @@ export default {
   name: "App", //创建前
   beforeCreate: function() {
     var token = sessionStorage.getItem("accessToken");
-    console.log(token);
     //判断是否登录
-    if (token == undefined) {
+    if (token == undefined || token == null) {
       router.push("/login");
     } else {
       router.push({ path: "/layout/dashboard" });
