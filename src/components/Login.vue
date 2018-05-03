@@ -86,6 +86,7 @@
 
 <script>
 import router from "../router";
+import comm from "../js/commons";
 
 export default {
   name: "login",
@@ -124,6 +125,7 @@ export default {
         if (!/^1[3|4|5|7|8][0-9]{9}$/.test(mobile)) {
           callback(new Error("请输入正确格式的手机号码"));
         } else {
+          //to-do 验证重复
           callback();
         }
       }
@@ -163,25 +165,30 @@ export default {
       dialogFormVisible: false
     };
   },
+  mounted: function() {
+    let options = comm.getOptions();
+    console.log(JSON.stringify(options));
+  },
   methods: {
     login(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$http.post(this.apiUrl + "/login", this.userForm).then(
-            resp => {
-              var ret = resp.body;
-              console.log(ret);
-              if (ret.code == 200) {
-                var token = ret.data.token;
-                sessionStorage.setItem("accessToken", token);
-                //跳转首页
-                router.push("/layout/dashboard");
-              } else {
-                //错误处理
-              }
-            },
-            resp => {}
-          );
+          comm.doLogin(this.userForm);
+          // this.$http.post(this.apiUrl + "/login", this.userForm).then(
+          //   resp => {
+          //     var ret = resp.body;
+          //     console.log(ret);
+          //     if (ret.code == 200) {
+          //       var token = ret.data.token;
+          //       sessionStorage.setItem("accessToken", token);
+          //       //跳转首页
+          //       router.push("/layout/dashboard");
+          //     } else {
+          //       //错误处理
+          //     }
+          //   },
+          //   resp => {}
+          // );
         } else {
           console.log("error submit!!");
           return false;
@@ -195,17 +202,23 @@ export default {
     register(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.$http.post(this.apiUrl + "/api", this.registerForm).then(
-            resp => {
-              var ret = resp.body;
-              if (ret.code == 200) {
-                this.dialogFormVisible = false;
-              } else {
-                //错误处理
-              }
-            },
-            resp => {}
-          );
+          comm.doRegister(this.registerForm, () => {
+            console.log("注册成功");
+            this.dialogFormVisible = false;
+          });
+          // this.$http
+          //   .post(this.apiUrl + "/api/register", this.registerForm)
+          //   .then(
+          //     resp => {
+          //       var ret = resp.body;
+          //       if (ret.code == 200) {
+          //         this.dialogFormVisible = false;
+          //       } else {
+          //         //错误处理
+          //       }
+          //     },
+          //     resp => {}
+          //   );
         } else {
           console.log("error submit!!");
           return false;

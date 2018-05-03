@@ -29,8 +29,7 @@
 
       <el-table-column
         prop="name"
-        label="等级名称"
-        width="280">
+        label="等级名称">
       </el-table-column>    
 
       <el-table-column
@@ -113,6 +112,7 @@
 
 <script>
 import router from "../router";
+import comm from "../js/commons";
 
 export default {
   name: "appLevel",
@@ -147,16 +147,7 @@ export default {
     };
   },
   mounted: function() {
-    this.appId = localStorage.getItem("currentAppId");
-    let token = localStorage.getItem("token");
-    if (token == undefined) {
-      localStorage.removeItem("currentAppId");
-      router.push("/login");
-    }
-    this.headers = {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
-    };
+    this.appId = sessionStorage.getItem("currentAppId");
     this.loadPage();
   },
   methods: {
@@ -165,7 +156,7 @@ export default {
     },
     loadPage: function() {
       let url =
-        "http://localhost:8091/api/level/page?appId=" +
+        "/api/level/page?appId=" +
         this.appId +
         "&pageNo=" +
         this.pageNo +
@@ -174,24 +165,29 @@ export default {
       if (this.searchForm.name != "" && this.searchForm.name != undefined) {
         url += "&name=" + this.searchForm.name;
       }
-      this.$http
-        .get(url, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              let data = ret.data;
-              this.levels = data.dataResult;
-              this.total = data.totalNum;
-              this.pageNo = data.currentPage;
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
+      comm.doGet(url, comm.getOptions(), data => {
+        this.levels = data.dataResult;
+        this.total = data.totalNum;
+        this.pageNo = data.currentPage;
+      });
+      // this.$http
+      //   .get(url, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         let data = ret.data;
+      //         this.levels = data.dataResult;
+      //         this.total = data.totalNum;
+      //         this.pageNo = data.currentPage;
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
     },
     search: function() {
       this.loadPage();
@@ -205,40 +201,50 @@ export default {
           this.levelForm.appId = this.appId;
           //更新
           if (this.levelForm.id != "" && this.levelForm.id != undefined) {
-            this.$http
-              .put("http://localhost:8091/api/level", this.levelForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                    this.loadPage();
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
+            comm.doPut("/api/level", this.levelForm, comm.getOptions(), () => {
+              this.dialogFormVisible = false;
+              this.loadPage();
+            });
+
+            // this.$http
+            //   .put("http://localhost:8091/api/level", this.levelForm, {
+            //     headers: this.headers
+            //   })
+            //   .then(
+            //     function(resp) {
+            //       var ret = resp.body;
+            //       if (ret.code == "200") {
+            //         this.loadPage();
+            //       }
+            //     },
+            //     function(resp) {
+            //       console.error(resp);
+            //     }
+            //   );
           } else {
-            this.$http
-              .post("http://localhost:8091/api/level", this.levelForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                    this.loadPage();
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
+            comm.doPost("/api/level", this.levelForm, comm.getOptions(), () => {
+              this.dialogFormVisible = false;
+              this.loadPage();
+            });
+
+            // this.$http
+            //   .post("http://localhost:8091/api/level", this.levelForm, {
+            //     headers: this.headers
+            //   })
+            //   .then(
+            //     function(resp) {
+            //       var ret = resp.body;
+            //       if (ret.code == "200") {
+            //         this.loadPage();
+            //       }
+            //     },
+            //     function(resp) {
+            //       console.error(resp);
+            //     }
+            //   );
           }
 
-          this.dialogFormVisible = false;
+          // this.dialogFormVisible = false;
         } else {
           console.log("error submit!!");
           return false;
@@ -256,27 +262,35 @@ export default {
       this.delDialogFormVisible = true;
     },
     doDel: function() {
-      this.$http
-        .delete("http://localhost:8091/api/level/" + this.delLevel.id, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              this.loadPage();
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
-      this.delLevel = {};
-      this.delDialogFormVisible = false;
+      comm.doDelete("/api/level/" + this.delLevel.id, comm.getOptions(), () => {
+        this.delLevel = {};
+        this.delDialogFormVisible = false;
+        this.loadPage();
+      });
+
+      // this.$http
+      //   .delete("http://localhost:8091/api/level/" + this.delLevel.id, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         this.loadPage();
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
+      // this.delLevel = {};
+      // this.delDialogFormVisible = false;
     },
     handleUpdate: function(row) {
-      this.levelForm = row;
-      this.dialogFormVisible = true;
+      comm.doGet("/api/level/" + row.id, comm.getOptions(), data => {
+        this.levelForm = data;
+        this.dialogFormVisible = true;
+      });
     }
   }
 };

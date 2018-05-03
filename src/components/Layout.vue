@@ -43,12 +43,13 @@
             background-color="#2196f3"
             text-color="#fff"
             active-text-color="#ffd04b"
-            :router=true>
+            :router="false">
             <el-submenu index="1">
               <template slot="title">
-                <icon name="user"></icon>&nbsp;
+                <icon name="user"></icon>&nbsp;{{profile.nickName}}
               </template>
-              <el-menu-item index="1-1" route="devProfile"><font color="black">{{profile.nickName}}</font></el-menu-item>
+              <el-menu-item index="1-1" @click="devProfile();"><font color="black">{{profile.nickName}}</font></el-menu-item>
+              <el-menu-item index="1-2" @click="logout();"><font color="black">退出登录</font></el-menu-item>
             </el-submenu>  
            </el-menu>
         </div>
@@ -163,6 +164,7 @@
 
 <script>
 import router from "../router";
+import comm from "../js/commons";
 
 export default {
   name: "layout",
@@ -183,95 +185,53 @@ export default {
     };
   },
   mounted: function() {
-    var token = sessionStorage.getItem("accessToken");
-    //判断是否登录
-    if (token == undefined || token == null) {
-      router.push("/login");
-    } else {
-      this.options = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token
-        }
-      };
-      //获取用户详情
-      this.getProfile();
-      this.getMyApps();
-    }
+    //获取用户详情
+    this.getProfile();
+    this.getMyApps();
   },
   methods: {
     //获取用户信息
     getProfile: function() {
-      this.$http.get(this.apiUrl + "/api/profile", this.options).then(
-        resp => {
-          var ret = resp.body;
-          if (ret.code == "200") {
-            this.profile = ret.data;
-          }
-        },
-        resp => {
-          if (resp.body.status == 403) {
-            // this.do403();
-          }
-        }
-      );
+      comm.doGet("/api/profile", comm.getOptions(), data => {
+        this.profile = data;
+      });
     },
     //获取用户的应用
     getMyApps: function() {
-      this.$http.get(this.apiUrl + "/api/apps", this.options).then(
-        resp => {
-          var ret = resp.body;
-          if (ret.code == "200") {
-            this.apps = ret.data;
-            if (this.apps.length != 0) {
-              for (var i = 0; i < this.apps.length; i++) {
-                var app = this.apps[i];
-                if (app.isDefault == 1) {
-                  this.currentApp = app;
-                  sessionStorage.setItem("currentAppId", app.appId);
-                  break;
-                }
-              }
+      comm.doGet("/api/apps", comm.getOptions(), data => {
+        this.apps = data;
+        if (this.apps.length != 0) {
+          for (var i = 0; i < this.apps.length; i++) {
+            var app = this.apps[i];
+            if (app.isDefault == 1) {
+              this.currentApp = app;
+              sessionStorage.setItem("currentAppId", app.appId);
+              break;
             }
           }
-        },
-        resp => {
-          if (resp.body.status == 403) {
-            // this.do403();
-          }
         }
-      );
+      });
     },
     openAppModal: function() {
       this.appForm = {};
       this.dialogFormVisible = true;
     },
     saveApp: function() {
-      this.$http
-        .post(this.apiUrl + "/api/app", this.appForm, this.options)
-        .then(
-          resp => {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              this.getMyApps();
-            }
-          },
-          function(resp) {
-            if (resp.body.status == 403) {
-              // this.do403();
-            }
-          }
-        );
-      this.dialogFormVisible = false;
+      comm.doPost("/api/app", this.appForm, comm.getOptions(), () => {
+        this.dialogFormVisible = false;
+        this.getMyApps();
+      });
     },
     selectApp: function(app) {
       this.currentApp = app;
-      sessionStorage.setItem("currentAppId", app.id);
+      sessionStorage.setItem("currentAppId", app.appId);
       router.push({ path: "/layout/dashboard" });
     },
-    do403() {
-      sessionStorage.removeItem("accessToken");
-      router.push({ path: "/login" });
+    devProfile() {
+      router.push("devProfile");
+    },
+    logout() {
+      comm.logout();
     }
   }
 };

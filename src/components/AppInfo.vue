@@ -87,6 +87,7 @@
 
 <script>
 import router from "../router";
+import comm from "../js/commons";
 
 export default {
   name: "appInfo",
@@ -123,16 +124,6 @@ export default {
     };
   },
   mounted: function() {
-    var token = sessionStorage.getItem("accessToken");
-    if (token == null || token == undefined) {
-      router.push({ path: "/login" });
-    }
-    this.options = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token
-      }
-    };
     this.appId = sessionStorage.getItem("currentAppId");
     this.activeName = "appInfo";
     this.getAppInfo();
@@ -150,62 +141,32 @@ export default {
       }
     },
     getAppInfo() {
-      this.$http.get(this.apiUrl + "/api/app/" + this.appId, this.options).then(
-        resp => {
-          var ret = resp.body;
-          console.log("appInfo->" + ret);
-          if (ret.code == "200") {
-            this.appInfo = ret.data;
-          }
-        },
-        resp => {
-          // this.do403();
-        }
-      );
+      comm.doGet("/api/app/" + this.appId, comm.getOptions(), data => {
+        this.appInfo = data;
+      });
     },
     getDvelopers() {
-      this.$http
-        .get(this.apiUrl + "/api/app/developer/" + this.appId, this.options)
-        .then(
-          resp => {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              this.developers = ret.data;
-            }
-          },
-          resp => {
-            if (resp.code == 403) {
-              this.do403();
-            }
-          }
-        );
+      let path = "/api/app/developer/" + this.appId;
+      if (this.searchForm.name != undefined && this.searchForm.name != null) {
+        path += "?name=" + this.searchForm.name;
+      }
+      comm.doGet(path, comm.getOptions(), data => {
+        this.developers = data;
+      });
     },
     saveDev() {
-      this.$http
-        .post(this.apiUrl + "/api/app/dev", this.devAddForm, this.options)
-        .then(
-          resp => {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              this.getDvelopers();
-            }
-          },
-          resp => {
-            if (resp.code == 403) {
-              this.do403();
-            }
-          }
-        );
-      this.dialogFormVisible = false;
+      this.devAddForm.appId = this.appId;
+      comm.doPost("/api/app/dev", this.devAddForm, comm.getOptions(), () => {
+        this.dialogFormVisible = false;
+        this.getDvelopers();
+      });
     },
     openAddModal() {
       this.devAddForm = {};
       this.dialogFormVisible = true;
     },
-    searchDev: function() {},
-    do403() {
-      sessionStorage.removeItem("accessToken");
-      router.push({ path: "/login" });
+    searchDev: function() {
+      this.getDvelopers();
     }
   }
 };

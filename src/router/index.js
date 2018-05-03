@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Login from '@/components/Login'
-import Register from '@/components/Register'
 
 import Layout from '@/components/Layout'
 import Dashboard from '@/components/Dashboard'
@@ -25,43 +24,43 @@ export default new Router({
       path: '/layout',
       name: 'Layout',
       component: Layout,
-      meta: { requireAuth: true },
+      meta: { requiresAuth: true },
       children: [
         {
           path: 'dashboard',
           name: 'Dashboard',
           component: Dashboard,
-          meta: { requireAuth: true }
+          meta: { requiresAuth: true }
         },
         {
           path: 'appInfo',
           name: 'AppInfo',
           component: AppInfo,
-          meta: { requireAuth: true }
+          meta: { requiresAuth: true }
         },
         {
           path: 'appLevel',
           name: 'AppLevel',
           component: AppLevel,
-          meta: { requireAuth: true }
+          meta: { requiresAuth: true }
         },
         {
           path: 'appEvent',
           name: 'AppEvent',
           component: AppEvent,
-          meta: { requireAuth: true }
+          meta: { requiresAuth: true }
         },
         {
           path: 'appModal',
           name: 'AppModal',
           component: AppModal,
-          meta: { requireAuth: true }
+          meta: { requiresAuth: true }
         },
         {
           path: 'devProfile',
           name: 'DevProfile',
           component: DevProfile,
-          meta: { requireAuth: true }
+          meta: { requiresAuth: true }
         }
       ]
     }
