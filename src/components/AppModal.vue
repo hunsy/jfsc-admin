@@ -19,18 +19,17 @@
         <el-table-column
             prop="id"
             label="ID"
-            width="180">
+            width="180px">
         </el-table-column>
 
         <el-table-column
             prop="name"
-            label="名称"
-            width="280">
+            label="名称">
         </el-table-column>
         
         <el-table-column
             label="勋章类型"
-            width="200">
+            width="200px">
             <template slot-scope="scope"> 
                 <span v-if="scope.row.type == 1">成长勋章</span>
                 <span v-if="scope.row.type == 2">积分勋章</span>
@@ -40,7 +39,7 @@
 
         <el-table-column
             label="状态"
-            width="200">
+            width="200px">
             <template slot-scope="scope"> 
                 <span v-if="scope.row.status == 0">下架</span>
                 <span v-if="scope.row.status == 1">上架</span>
@@ -50,13 +49,13 @@
         <el-table-column
             prop="updatedAt"
             label="最后变更时间"
-            width="280">
+            width="280px">
         </el-table-column> 
 
         <el-table-column
             fixed="right"
             label="操作"
-            width="400">
+            width="400px">
             <template slot-scope="scope"> 
                 <el-button @click="openEditModal(scope.row)" type="success" size="small">编辑</el-button>
             <!--     <el-button @click="handleDel(scope.row)" type="danger" size="small">删除</el-button> -->
@@ -229,6 +228,9 @@
 </template>
 
 <script>
+import router from "../router";
+import comm from "../js/commons";
+
 export default {
   name: "appModal",
   data() {
@@ -301,36 +303,39 @@ export default {
     };
   },
   mounted: function() {
-    this.appId = localStorage.getItem("currentAppId");
-    let token = localStorage.getItem("token");
-    if (token == undefined) {
-      localStorage.removeItem("currentAppId");
-      router.push("/login");
-    }
-    this.headers = {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
-    };
+    this.appId = sessionStorage.getItem("currentAppId");
+    // let token = localStorage.getItem("token");
+    // if (token == undefined) {
+    //   localStorage.removeItem("currentAppId");
+    //   router.push("/login");
+    // }
+    // this.headers = {
+    //   "Content-Type": "application/json",
+    //   Authorization: "Bearer " + token
+    // };
     this.loadPage();
   },
   methods: {
     loadTypes() {
       if (this.types.length == 0) {
-        this.$http
-          .get("http://localhost:8091/api/modalSerial/types", {
-            headers: this.headers
-          })
-          .then(
-            function(resp) {
-              var ret = resp.body;
-              if (ret.code == "200") {
-                this.types = ret.data;
-              }
-            },
-            function(resp) {
-              console.error(resp);
-            }
-          );
+        comm.doGet("/api/modalSerial/types", comm.getOptions(), data => {
+          this.types = data;
+        });
+        //   this.$http
+        //     .get("http://localhost:8091/api/modalSerial/types", {
+        //       headers: this.headers
+        //     })
+        //     .then(
+        //       function(resp) {
+        //         var ret = resp.body;
+        //         if (ret.code == "200") {
+        //           this.types = ret.data;
+        //         }
+        //       },
+        //       function(resp) {
+        //         console.error(resp);
+        //       }
+        //     );
       }
     },
     handleCurrentChange(currentPage) {

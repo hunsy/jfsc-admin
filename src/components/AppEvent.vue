@@ -18,19 +18,18 @@
         <el-table-column
             prop="id"
             label="ID"
-            width="180">
+            width="180px">
         </el-table-column>
 
         <el-table-column
             prop="name"
-            label="名称"
-            width="280">
+            label="名称">
         </el-table-column>
 
         <el-table-column
             prop="score"
             label="分值"
-            width="280">
+            width="280px">
         </el-table-column>
         
         
@@ -47,13 +46,13 @@
         <el-table-column
             prop="updatedAt"
             label="最后变更时间"
-            width="280">
+            width="280px">
         </el-table-column> 
 
         <el-table-column
             fixed="right"
             label="操作"
-            width="400">
+            width="400px">
             <template slot-scope="scope"> 
                 <el-button @click="openEditModal(scope.row)" type="success" size="small">编辑</el-button>
                 <el-button @click="handleDel(scope.row)" type="danger" size="small">删除</el-button>
@@ -204,6 +203,9 @@
 </template>
 
 <script>
+import router from "../router";
+import comm from "../js/commons";
+
 export default {
   name: "appEvent",
   data() {
@@ -263,16 +265,7 @@ export default {
     };
   },
   mounted: function() {
-    this.appId = localStorage.getItem("currentAppId");
-    let token = localStorage.getItem("token");
-    if (token == undefined) {
-      localStorage.removeItem("currentAppId");
-      router.push("/login");
-    }
-    this.headers = {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + token
-    };
+    this.appId = sessionStorage.getItem("currentAppId");
     this.loadPage();
   },
   methods: {
@@ -300,7 +293,7 @@ export default {
     },
     loadPage() {
       let url =
-        "http://localhost:8091/api/event/page?appId=" +
+        "/api/event/page?appId=" +
         this.appId +
         "&pageNo=" +
         this.pageNo +
@@ -309,28 +302,33 @@ export default {
       if (this.searchForm.name != "" && this.searchForm.name != undefined) {
         url += "&name=" + this.searchForm.name;
       }
-      this.$http
-        .get(url, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              let data = ret.data;
-              this.datas = data.dataResult;
-              this.total = data.totalNum;
-              this.pageNo = data.currentPage;
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
+      comm.doGet(url, comm.getOptions(), data => {
+        this.datas = data.dataResult;
+        this.total = data.totalNum;
+        this.pageNo = data.currentPage;
+      });
+
+      // this.$http
+      //   .get(url, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         let data = ret.data;
+      //         this.datas = data.dataResult;
+      //         this.total = data.totalNum;
+      //         this.pageNo = data.currentPage;
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
     },
     openNewModal() {
       //   this.loadTypes();
-      this.saveForm = {};
       this.dialogFormVisible = true;
     },
     saveOrUpdate(formName) {
@@ -339,40 +337,51 @@ export default {
           this.saveForm.appId = this.appId;
           //更新
           if (this.saveForm.id != "" && this.saveForm.id != undefined) {
-            this.$http
-              .put("http://localhost:8091/api/event", this.saveForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                    this.loadPage();
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
-          } else {
-            this.$http
-              .post("http://localhost:8091/api/event", this.saveForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                    this.loadPage();
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
-          }
+            comm.doPut("/api/event", this.saveForm, comm.getOptions(), () => {
+              this.loadPage();
+              this.saveForm = {};
+              this.dialogFormVisible = false;
+            });
 
-          this.dialogFormVisible = false;
+            //   this.$http
+            //     .put("http://localhost:8091/api/event", this.saveForm, {
+            //       headers: this.headers
+            //     })
+            //     .then(
+            //       function(resp) {
+            //         var ret = resp.body;
+            //         if (ret.code == "200") {
+            //           this.loadPage();
+            //         }
+            //       },
+            //       function(resp) {
+            //         console.error(resp);
+            //       }
+            //     );
+          } else {
+            comm.doPost("/api/event", this.saveForm, comm.getOptions(), () => {
+              this.loadPage();
+              this.saveForm = {};
+              this.dialogFormVisible = false;
+            });
+
+            // this.$http
+            //   .post("http://localhost:8091/api/event", this.saveForm, {
+            //     headers: this.headers
+            //   })
+            //   .then(
+            //     function(resp) {
+            //       var ret = resp.body;
+            //       if (ret.code == "200") {
+            //         this.loadPage();
+            //       }
+            //     },
+            //     function(resp) {
+            //       console.error(resp);
+            //     }
+            //   );
+          }
+          // this.dialogFormVisible = false;
         } else {
           console.log("error submit!!");
           return false;
@@ -382,22 +391,27 @@ export default {
     openEditModal(row) {
       //   this.loadTypes();
       this.operate = "更新事件";
-      let url = this.apiUrl + "/" + row.id;
-      let options = {
-        headers: this.headers
-      };
-      this.$http.get(url + row.id, options).then(
-        resp => {
-          var ret = resp.body;
-          if (ret.code == "200") {
-            this.saveForm = ret.data;
-          }
-        },
-        resp => {
-          console.error(resp);
-        }
-      );
-      this.dialogFormVisible = true;
+      comm.doGet("/api/event/" + row.id, comm.getOptions(), data => {
+        this.saveForm = data;
+        this.dialogFormVisible = true;
+      });
+
+      // let url = this.apiUrl + "/" + row.id;
+      // let options = {
+      //   headers: this.headers
+      // };
+      // this.$http.get(url + row.id, options).then(
+      //   resp => {
+      //     var ret = resp.body;
+      //     if (ret.code == "200") {
+      //       this.saveForm = ret.data;
+      //     }
+      //   },
+      //   resp => {
+      //     console.error(resp);
+      //   }
+      // );
+      // this.dialogFormVisible = true;
     } /* ,
     openNewConditionModal(row) {
       this.saveConditionForm = {};

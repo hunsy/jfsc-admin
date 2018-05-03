@@ -34,19 +34,18 @@
         <el-table-column
           prop="mobile"
           label="开发者账号"
-          width="600px">
+          width="350px">
         </el-table-column>
 
         <el-table-column
           prop="nickName"
-          label="开发者名称"
-          width="300px">
+          label="开发者名称">
         </el-table-column>    
 
         <el-table-column
           prop="role"
           label="开发者角色"
-          width="100px">
+          width="300px">
         </el-table-column> 
       </el-table>
 
