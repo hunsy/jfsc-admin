@@ -8,8 +8,9 @@ import Dashboard from '@/components/Dashboard'
 import AppInfo from '@/components/AppInfo'
 import AppLevel from "@/components/AppLevel"
 import AppEvent from "@/components/AppEvent"
-import AppModal from "@/components/AppModal"
+import AppMedal from "@/components/AppMedal"
 import DevProfile from "@/components/DevProfile"
+import AppUserInfo from '@/components/AppUserInfo'
 
 Vue.use(Router)
 
@@ -51,15 +52,22 @@ export default new Router({
           meta: { requiresAuth: true }
         },
         {
-          path: 'appModal',
-          name: 'AppModal',
-          component: AppModal,
+          path: 'appMedal',
+          name: 'AppMedal',
+          component: AppMedal,
           meta: { requiresAuth: true }
         },
         {
           path: 'devProfile',
           name: 'DevProfile',
           component: DevProfile,
+          meta: { requiresAuth: true }
+        }
+        ,
+        {
+          path: 'userInfo',
+          name: 'AppUserInfo',
+          component: AppUserInfo,
           meta: { requiresAuth: true }
         }
       ]

@@ -2,6 +2,7 @@
 import router from '../router'
 import Vue from 'vue'
 import VueResource from 'vue-resource';
+import { Notification } from 'element-ui';
 
 export default {
     domain: "http://localhost:8091",
@@ -23,7 +24,7 @@ export default {
                 if (body.code == 200 && body.data != null) {
                     cb(body.data);
                 } else {
-                    console.log(body);
+                    this.showErr(body.msg);
                 }
             }, resp => {
                 if (resp.status == 403) {
@@ -37,6 +38,8 @@ export default {
                 let body = resp.body;
                 if (body.code == 200) {
                     cb();
+                } else {
+                    this.showErr(body.msg);
                 }
             }, resp => {
                 if (resp.status == 403) {
@@ -50,6 +53,8 @@ export default {
                 let body = resp.body;
                 if (body.code == 200) {
                     cb();
+                } else {
+                    this.showErr(body.msg);
                 }
             }, resp => {
                 if (resp.status == 403) {
@@ -63,6 +68,8 @@ export default {
                 let body = resp.body;
                 if (body.code == 200) {
                     cb();
+                } else {
+                    this.showErr(body.msg);
                 }
             }, resp => {
                 if (resp.status == 403) {
@@ -79,6 +86,8 @@ export default {
                     var token = body.data.token;
                     sessionStorage.setItem("accessToken", token);
                     router.push("/layout/dashboard");
+                } else {
+                    this.showErr(body.msg);
                 }
             }, resp => {
 
@@ -90,6 +99,8 @@ export default {
                 let body = resp.body;
                 if (body.code == 200) {
                     cb();
+                } else {
+                    this.showErr(body.msg);
                 }
             }, resp => {
 
@@ -101,6 +112,13 @@ export default {
         //清空缓存
         sessionStorage.clear();
         router.push("/login");
+    },
+    showErr(msg) {
+        alert(msg);
+        // this.$notify.error({
+        //     title: '错误',
+        //     message: msg
+        // });
     }
 
 }

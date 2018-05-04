@@ -87,7 +87,7 @@
             <el-menu-item 
                 index="1" 
                 route="dashboard">
-                <icon name="tachometer-alt"></icon>&nbsp;&nbsp;
+                <icon name="chart-line"></icon>&nbsp;&nbsp;
 
                 <span slot="title">
                 <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
@@ -98,7 +98,7 @@
             <el-menu-item 
                 index="2" 
                 route="appInfo">
-                <icon name="tachometer-alt"></icon>&nbsp;&nbsp;
+                <icon name="mobile"></icon>&nbsp;&nbsp;
 
                 <span slot="title">
                 <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
@@ -109,7 +109,7 @@
             <el-menu-item 
                 index="3" 
                 route="appLevel">
-                <icon name="tachometer-alt"></icon>&nbsp;&nbsp;
+                <icon name="level-up-alt"></icon>&nbsp;&nbsp;
 
                 <span slot="title">
                 <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
@@ -120,7 +120,7 @@
             <el-menu-item 
                 index="4" 
                 route="appEvent">
-                <icon name="tachometer-alt"></icon>&nbsp;&nbsp;
+                <icon name="thumbtack"></icon>&nbsp;&nbsp;
 
                 <span slot="title">
                 <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
@@ -130,14 +130,25 @@
 
             <el-menu-item 
                 index="5" 
-                route="appModal">
-                <icon name="tachometer-alt"></icon>&nbsp;&nbsp;
+                route="appMedal">
+                <icon name="bookmark"></icon>&nbsp;&nbsp;
 
                 <span slot="title">
                 <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
                 勋章定义
                 </span>
-            </el-menu-item>            
+            </el-menu-item>     
+
+            <el-menu-item 
+                index="6" 
+                route="userInfo">
+                <icon name="users"></icon>&nbsp;&nbsp;
+
+                <span slot="title">
+                <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
+                用户管理
+                </span>
+            </el-menu-item>           
             </el-menu>
         </el-aside>
 

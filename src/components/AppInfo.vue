@@ -9,7 +9,50 @@
       label="应用详情" 
       name="appInfo"
       >
-            {{appInfo.id}}->{{appInfo.name}}
+
+    <el-card class="box-card">
+      <div slot="header">
+        <span>应用详情</span>
+      </div>
+      <div class="text item">
+        <el-form 
+          :model="appInfo"
+          label-width="150px"
+          label-position="left">
+
+          <el-form-item label="应用名称">
+            <el-input 
+              :disabled="appInfoEdit"
+              v-model="appInfo.name"
+              placeholder="应用名称"
+              ></el-input>
+          </el-form-item>
+
+        <el-form-item label="应用KEY">
+            <el-input 
+              :disabled="true"
+              v-model="appInfo.appKey"
+              ></el-input>
+        </el-form-item>
+
+         <el-form-item label="应用SECRET">
+            <el-input 
+              :disabled="true"
+              v-model="appInfo.appSecret"
+              type="password"
+              ></el-input>
+          </el-form-item>
+
+        </el-form>    
+        <div class="box-footer">
+          <el-button type="success" @click="appInfoEdit = false" v-show="appInfoEdit" size="small">编辑</el-button>
+          <el-button type="primary" @click="saveApp()" v-show="!appInfoEdit" size="small">保存</el-button>
+          <el-button type="default" @click="appInfoEdit = true" v-show="!appInfoEdit" size="small">取消</el-button>
+        </div> 
+      </div>
+      
+
+      </el-card>
     </el-tab-pane>
     <el-tab-pane label="开发者" name="developers">
 
@@ -100,6 +143,7 @@ export default {
         id: "",
         name: ""
       },
+      appInfoEdit: true,
       developers: [],
       searchForm: {
         name: ""
@@ -166,13 +210,23 @@ export default {
     },
     searchDev: function() {
       this.getDvelopers();
+    },
+    saveApp() {
+      comm.doPut("/api/app", this.appInfo, comm.getOptions(), () => {
+        this.appInfoEdit = true;
+      });
     }
   }
 };
 </script>
 
 <style>
-
+.box-card {
+  width: 550px;
+}
+.box-footer {
+  margin: 0 auto;
+}
 </style>
 
 

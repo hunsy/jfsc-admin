@@ -153,6 +153,7 @@ export default {
   methods: {
     handleCurrentChange(currentPage) {
       this.pageNo = currentPage;
+      this.loadPage();
     },
     loadPage: function() {
       let url =

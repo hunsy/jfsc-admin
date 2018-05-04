@@ -24,7 +24,7 @@
 
         <el-table-column
             prop="name"
-            label="名称">
+            label="系列名称">
         </el-table-column>
         
         <el-table-column
@@ -35,6 +35,11 @@
                 <span v-if="scope.row.type == 2">积分勋章</span>
                 <span v-if="scope.row.type == 3">消费勋章</span>
             </template>
+        </el-table-column>
+
+        <el-table-column
+            prop="medalNum"
+            label="勋章数量">
         </el-table-column>
 
         <el-table-column
@@ -160,7 +165,7 @@
         <el-table-column
             prop="updatedAt"
             label="最后变更时间"
-            width="150">
+            width="250">
         </el-table-column> 
 
         <el-table-column
@@ -284,9 +289,9 @@ export default {
         name: [
           { required: true, message: "请输入勋章名称", trigger: "blur" },
           {
-            min: 3,
+            min: 1,
             max: 16,
-            message: "长度在 3 到 16 个字符",
+            message: "长度在 1 到 16 个字符",
             trigger: "blur"
           }
         ]
@@ -318,7 +323,7 @@ export default {
   methods: {
     loadTypes() {
       if (this.types.length == 0) {
-        comm.doGet("/api/modalSerial/types", comm.getOptions(), data => {
+        comm.doGet("/api/medalSerial/types", comm.getOptions(), data => {
           this.types = data;
         });
         //   this.$http
@@ -343,7 +348,7 @@ export default {
     },
     loadPage() {
       let url =
-        "http://localhost:8091/api/modalSerial/page?appId=" +
+        "/api/medalSerial/page?appId=" +
         this.appId +
         "&pageNo=" +
         this.pageNo +
@@ -352,24 +357,30 @@ export default {
       if (this.searchForm.name != "" && this.searchForm.name != undefined) {
         url += "&name=" + this.searchForm.name;
       }
-      this.$http
-        .get(url, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              let data = ret.data;
-              this.datas = data.dataResult;
-              this.total = data.totalNum;
-              this.pageNo = data.currentPage;
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
+
+      comm.doGet(url, comm.getOptions(), data => {
+        this.datas = data.dataResult;
+        this.total = data.totalNum;
+        this.pageNo = data.currentPage;
+      });
+      // this.$http
+      //   .get(url, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         let data = ret.data;
+      //         this.datas = data.dataResult;
+      //         this.total = data.totalNum;
+      //         this.pageNo = data.currentPage;
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
     },
     openNewModal() {
       this.operate = "新增勋章系列";
@@ -383,40 +394,59 @@ export default {
           this.saveForm.appId = this.appId;
           //更新
           if (this.saveForm.id != "" && this.saveForm.id != undefined) {
-            this.$http
-              .put("http://localhost:8091/api/modalSerial", this.saveForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                    this.loadPage();
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
+            comm.doPut(
+              "/api/medalSerial",
+              this.saveForm,
+              comm.getOptions(),
+              () => {
+                this.loadPage();
+                this.dialogFormVisible = false;
+              }
+            );
+
+            // this.$http
+            //   .put("http://localhost:8091/api/modalSerial", this.saveForm, {
+            //     headers: this.headers
+            //   })
+            //   .then(
+            //     function(resp) {
+            //       var ret = resp.body;
+            //       if (ret.code == "200") {
+            //         this.loadPage();
+            //       }
+            //     },
+            //     function(resp) {
+            //       console.error(resp);
+            //     }
+            //   );
           } else {
-            this.$http
-              .post("http://localhost:8091/api/modalSerial", this.saveForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                    this.loadPage();
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
+            comm.doPost(
+              "/api/medalSerial",
+              this.saveForm,
+              comm.getOptions(),
+              () => {
+                this.loadPage();
+                this.dialogFormVisible = false;
+              }
+            );
+            // this.$http
+            //   .post("http://localhost:8091/api/modalSerial", this.saveForm, {
+            //     headers: this.headers
+            //   })
+            //   .then(
+            //     function(resp) {
+            //       var ret = resp.body;
+            //       if (ret.code == "200") {
+            //         this.loadPage();
+            //       }
+            //     },
+            //     function(resp) {
+            //       console.error(resp);
+            //     }
+            //   );
           }
 
-          this.dialogFormVisible = false;
+          // this.dialogFormVisible = false;
         } else {
           console.log("error submit!!");
           return false;
@@ -426,22 +456,26 @@ export default {
     openEditModal(row) {
       this.loadTypes();
       this.operate = "更新勋章系列";
-      this.$http
-        .get("http://localhost:8091/api/modalSerial/" + row.id, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              this.saveForm = ret.data;
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
-      this.dialogFormVisible = true;
+      comm.doGet("/api/medalSerial/" + row.id, comm.getOptions(), data => {
+        this.saveForm = data;
+        this.dialogFormVisible = true;
+      });
+      // this.$http
+      //   .get("http://localhost:8091/api/modalSerial/" + row.id, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         this.saveForm = ret.data;
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
+      // this.dialogFormVisible = true;
     },
     openNewModalE(row) {
       this.modalOperate = "新增勋章";
@@ -459,36 +493,54 @@ export default {
             this.saveModalForm.id != "" &&
             this.saveModalForm.id != undefined
           ) {
-            this.$http
-              .put("http://localhost:8091/api/modal", this.saveModalForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                    this.loadModals(serialId);
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
+            comm.doPut(
+              "/api/medal",
+              this.saveModalForm,
+              comm.getOptions(),
+              () => {
+                this.loadModals(serialId);
+              }
+            );
+            // this.$http
+            //   .put("http://localhost:8091/api/modal", this.saveModalForm, {
+            //     headers: this.headers
+            //   })
+            //   .then(
+            //     function(resp) {
+            //       var ret = resp.body;
+            //       if (ret.code == "200") {
+            //         this.loadModals(serialId);
+            //       }
+            //     },
+            //     function(resp) {
+            //       console.error(resp);
+            //     }
+            //   );
           } else {
-            this.$http
-              .post("http://localhost:8091/api/modal", this.saveModalForm, {
-                headers: this.headers
-              })
-              .then(
-                function(resp) {
-                  var ret = resp.body;
-                  if (ret.code == "200") {
-                  }
-                },
-                function(resp) {
-                  console.error(resp);
-                }
-              );
+            comm.doPost(
+              "/api/medal",
+              this.saveModalForm,
+              comm.getOptions(),
+              () => {
+                this.loadModals(serialId);
+                this.loadPage();
+              }
+            );
+
+            // this.$http
+            //   .post("http://localhost:8091/api/modal", this.saveModalForm, {
+            //     headers: this.headers
+            //   })
+            //   .then(
+            //     function(resp) {
+            //       var ret = resp.body;
+            //       if (ret.code == "200") {
+            //       }
+            //     },
+            //     function(resp) {
+            //       console.error(resp);
+            //     }
+            //   );
           }
 
           this.modalDialogFormVisible = false;
@@ -500,22 +552,24 @@ export default {
     },
     openEditModalE(row) {
       this.modalOperate = "更新勋章";
-      this.$http
-        .get("http://localhost:8091/api/modal/" + row.id, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              this.saveModalForm = ret.data;
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
-
+      comm.doGet("/api/medal/" + row.id, comm.getOptions(), data => {
+        this.saveModalForm = data;
+      });
+      // this.$http
+      //   .get("http://localhost:8091/api/modal/" + row.id, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         this.saveModalForm = ret.data;
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
       this.modalDialogFormVisible = true;
     },
     showModals(row) {
@@ -523,44 +577,48 @@ export default {
       this.loadModals(row.id);
     },
     loadModals(id) {
-      let url = "http://localhost:8091/api/modal/list/" + id;
-      this.$http
-        .get(url, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              this.modals = ret.data;
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
+      let url = "/api/medal/list/" + id;
+      comm.doGet(url, comm.getOptions(), data => {
+        this.modals = data;
+      });
+
+      // this.$http
+      //   .get(url, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         this.modals = ret.data;
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
     },
     querySearchAsync(str, cb) {
-      let url =
-        "http://localhost:8091/api/event/list?appId=" +
-        this.appId +
-        "&name=" +
-        str;
-      this.$http
-        .get(url, {
-          headers: this.headers
-        })
-        .then(
-          function(resp) {
-            var ret = resp.body;
-            if (ret.code == "200") {
-              cb(ret.data);
-            }
-          },
-          function(resp) {
-            console.error(resp);
-          }
-        );
+      let url = "/api/event/list?appId=" + this.appId + "&name=" + str;
+
+      comm.doGet(url, comm.getOptions(), data => {
+        cb(data);
+      });
+      // this.$http
+      //   .get(url, {
+      //     headers: this.headers
+      //   })
+      //   .then(
+      //     function(resp) {
+      //       var ret = resp.body;
+      //       if (ret.code == "200") {
+      //         cb(ret.data);
+      //       }
+      //     },
+      //     function(resp) {
+      //       console.error(resp);
+      //     }
+      //   );
     },
     handleSelect(item) {
       this.saveModalForm.eventId = item.id;

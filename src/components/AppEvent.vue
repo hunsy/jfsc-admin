@@ -329,6 +329,7 @@ export default {
     },
     openNewModal() {
       //   this.loadTypes();
+      this.saveForm = {};
       this.dialogFormVisible = true;
     },
     saveOrUpdate(formName) {
