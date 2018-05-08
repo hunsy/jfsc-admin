@@ -11,6 +11,7 @@ import AppEvent from "@/components/AppEvent"
 import AppMedal from "@/components/AppMedal"
 import DevProfile from "@/components/DevProfile"
 import AppUserInfo from '@/components/AppUserInfo'
+import AppMenu from '@/components/AppMenu'
 
 Vue.use(Router)
 
@@ -68,6 +69,13 @@ export default new Router({
           path: 'userInfo',
           name: 'AppUserInfo',
           component: AppUserInfo,
+          meta: { requiresAuth: true }
+        }
+        ,
+        {
+          path: 'appMenu',
+          name: 'AppMenu',
+          component: AppMenu,
           meta: { requiresAuth: true }
         }
       ]

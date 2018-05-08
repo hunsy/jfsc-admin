@@ -5,7 +5,6 @@
         <el-breadcrumb-item>用户</el-breadcrumb-item>
     </el-breadcrumb>
     
-    <hr>
     <!-- 查询表单 -->
     <el-form :inline="true" :model="searchForm" class="demo-form-inline">
         <el-form-item>
@@ -21,6 +20,7 @@
 
     <el-table
       :data="datas"
+      border
       >
     <el-table-column
         prop="id"
@@ -29,49 +29,24 @@
     </el-table-column>
 
     <el-table-column
-        prop="userAccount"
-        label="账号"
-        width="200">
+        label="账号">
+
+      <template slot-scope="scope">
+        <el-popover trigger="hover" placement="top">
+          <p>勋章数: {{ scope.row.medalNum }}</p>
+          <p>成长值: {{ scope.row.score }}</p>
+          <p>等&nbsp;&nbsp;&nbsp;&nbsp;级: {{ scope.row.currentLevel }}</p>
+          <p>勋章数: {{ scope.row.integral }}</p>
+          <p>金&nbsp;&nbsp;&nbsp;&nbsp;币: {{ scope.row.virtualIcons }}</p>
+          <div slot="reference" class="name-wrapper">
+            <el-tag size="medium">{{ scope.row.userAccount }}</el-tag>
+          </div>
+        </el-popover>
+      </template>
+
     </el-table-column>   
 
-    <el-table-column
-        prop="nickName"
-        label="昵称">
-    </el-table-column>    
-
-    <el-table-column
-        prop="medalNum"
-        label="勋章数"
-        width="150">
-    </el-table-column>
-
-
-    <el-table-column
-        prop="score"
-        label="成长值"
-        width="150">
-    </el-table-column>
-
-    <el-table-column
-        prop="currentLevel"
-        label="等级"
-        width="150">
-    </el-table-column>
-
-
-    <el-table-column
-        prop="integral"
-        label="积分"
-        width="180">
-    </el-table-column>
-
-    <el-table-column
-        prop="virtualIcons"
-        label="金币"
-        width="150">
-    </el-table-column>
-
-
+  
     <el-table-column
         prop="updatedAt"
         label="最后变更时间"

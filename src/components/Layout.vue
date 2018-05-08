@@ -79,6 +79,7 @@
               default-active="1"
               background-color="#2196F3"
               text-color="#fff"
+              style="height:100%;"
               active-text-color="#ffd04b"
               index="x"
               :router="true"
@@ -148,7 +149,19 @@
                 <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
                 用户管理
                 </span>
-            </el-menu-item>           
+            </el-menu-item>    
+
+
+            <el-menu-item 
+                index="7" 
+                route="appMenu">
+                <icon name="users"></icon>&nbsp;&nbsp;
+
+                <span slot="title">
+                <!-- <router-link class="router-link" :to="{ name: 'Dashboard', params: {} }"></router-link> -->
+                菜单管理
+                </span>
+            </el-menu-item>            
             </el-menu>
         </el-aside>
 
@@ -258,7 +271,7 @@ export default {
   background: #2196f3;
 }
 .menu {
-  min-height: 600px;
+  height: 100%;
   background: #2196f3;
   padding-right: -5px;
 }
