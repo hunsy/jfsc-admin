@@ -1,7 +1,12 @@
 <template>
   <div id="appModal">
 
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/layout/dashboard' }">概览</el-breadcrumb-item>
+        <el-breadcrumb-item>勋章</el-breadcrumb-item>
+    </el-breadcrumb>
+
+    <el-form :inline="true" :model="searchForm" class="query-form">
         <el-form-item>
             <el-input v-model="searchForm.name" placeholder="勋章名称"></el-input>
         </el-form-item>
@@ -15,6 +20,7 @@
 
     <el-table
         :data="datas"
+        border
         >
         <el-table-column
             prop="id"

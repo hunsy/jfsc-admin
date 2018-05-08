@@ -1,10 +1,17 @@
 <template>
   <div id="app_info">
+
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/layout/dashboard' }">概览</el-breadcrumb-item>
+        <el-breadcrumb-item>应用</el-breadcrumb-item>
+    </el-breadcrumb>
+
   
   <el-tabs 
     v-model="activeName" 
     @tab-click="handleClick"
-    width="100%">
+    width="100%"
+    class="my-tabs">
     <el-tab-pane 
       label="应用详情" 
       name="appInfo"
@@ -58,7 +65,8 @@
 
       <el-form 
         :inline="true" 
-        :model="searchForm">
+        :model="searchForm"
+        class="query-form">
         <el-form-item>
           <el-input v-model="searchForm.name" placeholder="开发者名称"></el-input>
         </el-form-item>
@@ -72,7 +80,7 @@
 
       <el-table
         :data="developers"
-        style="width: 100%"
+        :border="true"
         >
         <el-table-column
           prop="mobile"
@@ -223,6 +231,7 @@ export default {
 <style>
 .box-card {
   width: 550px;
+  margin-top: 25px;
 }
 .box-footer {
   margin: 0 auto;

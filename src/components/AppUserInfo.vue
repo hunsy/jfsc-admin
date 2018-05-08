@@ -6,7 +6,7 @@
     </el-breadcrumb>
     
     <!-- 查询表单 -->
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+    <el-form :inline="true" :model="searchForm" class="query-form">
         <el-form-item>
             <el-input v-model="searchForm.userAccount" placeholder="用户账号"></el-input>
         </el-form-item>

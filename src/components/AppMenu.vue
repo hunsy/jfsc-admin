@@ -211,12 +211,7 @@ export default {
 </script>
 
 <style>
-.query-form {
-  margin-top: 20px;
-  padding-top: 25px;
-  padding-left: 25px;
-  background-color: #f2f2f2;
-}
+
 
 .custom-tree-node {
   display: block;

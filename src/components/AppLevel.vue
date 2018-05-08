@@ -1,7 +1,12 @@
 <template>
   <div id="appLevel">
 
-    <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+        <el-breadcrumb-item :to="{ path: '/layout/dashboard' }">概览</el-breadcrumb-item>
+        <el-breadcrumb-item>等级</el-breadcrumb-item>
+    </el-breadcrumb>
+
+    <el-form :inline="true" :model="searchForm" class="query-form">
         <el-form-item>
             <el-input v-model="searchForm.name" placeholder="等级名称"></el-input>
         </el-form-item>
@@ -14,6 +19,7 @@
     </el-form>
     <el-table
       :data="levels"
+      :border="true"
       >
       <el-table-column
         prop="id"

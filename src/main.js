@@ -8,12 +8,14 @@ import 'element-ui/lib/theme-chalk/index.css';
 import 'vue-awesome/icons';
 import Icon from 'vue-awesome/components/Icon';
 import VueResource from 'vue-resource';
+import MyStyle from "./css/style.css";
 
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI);
 Vue.component('Icon', Icon);
 Vue.use(VueResource);
+Vue.use(MyStyle);
 
 // Vue.http.options.emulateJSON = true
 /* eslint-disable no-new */
